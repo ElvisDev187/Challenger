@@ -15,28 +15,48 @@ import { cn } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { format } from 'date-fns'
-import { Image, ImagePlus } from 'lucide-react'
+import { Image, ImagePlus, Loader2 } from 'lucide-react'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { TournoiRequest } from "@/lib/validators/tournoi";
+
 
 
 const Page = () => {
   const router = useRouter()
   const [name, setName] = useState<string>('')
+  const [desc, setDesc] = useState<string>('')
   const [isFree, setIsFree] = useState<boolean>(true)
   const [open, setOpen] = useState(false)
   const [Ville, setVille] = useState<string>("")
   const [age, setAge] = useState(17)
+  const [limit, setLimit] = useState()
   const [inscription, setDateIn] = useState<Date>()
   const [debut, setDateDeb] = useState<Date>()
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imageUrl, setImageUrl] = useState<{
+    fileUrl: string;
+    fileKey: string;
+  }[] | undefined>()
 
   const { loginToast } = useCustomToasts()
 
   const { mutate: createTournoi, isLoading } = useMutation({
     mutationFn: async () => {
+      const payload: TournoiRequest = {
+        name: name,
+        limit,
+        debut: debut?.toLocaleDateString()!,
+        inscriptionLimit: inscription?.toLocaleDateString()!,
+        description: desc,
+        lieu: Ville,
+        ageMax: age,
+        cover: imageUrl?.[0].fileUrl!,
+        isFree
+      }
 
+      const { data } = await axios.post('/api/tournoi/create', payload)
+      return data as string
     },
     onError: (err: any) => {
       if (err instanceof AxiosError) {
@@ -68,7 +88,9 @@ const Page = () => {
       })
     },
     onSuccess: (data: any) => {
-      router.push(`/r/${data}`)
+      // router.push(`/r/${data}`)
+      console.log(data);
+      
     },
   })
 
@@ -81,7 +103,7 @@ const Page = () => {
           <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
               <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="username">Nom du Tournoi</label>
-              <Input value={name} onChange={(e)=>setName(e.target.value)} id="username" type="text" className='placeholder:text-slate-900 font-semibold' />
+              <Input value={name} onChange={(e) => setName(e.target.value)} id="username" type="text" className='placeholder:text-slate-900 font-semibold' />
             </div>
 
             <div>
@@ -179,12 +201,12 @@ const Page = () => {
               </Popover>
             </div>
             <div className="flex items-center space-x-2">
-              <Switch onClick={()=>setIsFree(prev=> !prev)} id="airplane-mode" />
+              <Switch onClick={() => setIsFree(prev => !prev)} id="airplane-mode" />
               <label htmlFor="airplane-mode" className='text-slate-700 text-sm font-medium dark:text-gray-200'>Inscription payante</label>
             </div>
             <div>
               <label className="text-slate-700 text-sm mb-2 font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Age max : <span className="font-semibold text-slate-900">{age}</span></label>
-              <Slider defaultValue={[17]} onValueChange={(e)=> setAge(e[0])} max={100} step={1}/> 
+              <Slider defaultValue={[17]} onValueChange={(e) => setAge(e[0])} max={100} step={1} />
             </div>
             <div>
               <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Description</label>
@@ -194,32 +216,19 @@ const Page = () => {
               <label className="block text-sm font-medium text-slate-700">
                 Image
               </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 bg-indigo-600 border-gray-300 border-dashed rounded-md">
-                {/* <div className="space-y-1 text-center">
-                  <ImagePlus className='text-white self-center h-10 w-10' color='white'/>
-                  <div className="flex text-sm text-gray-600">
-                    <label htmlFor="file-upload" className="relative p-1 cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                      <span className="">Upload a file</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                    </label>
-                    <p className="pl-1 text-white">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-white">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div> */}
+              <>
                 <UploadDropzone
-                 endpoint="imageUploader"
-                 onClientUploadComplete={(res) => {
-                   // Do something with the response
-                   console.log("Files: ", res);
-                   alert("Upload Completed");
-                 }}
-                 onUploadError={(error: Error) => {
-                   alert(`ERROR! ${error.message}`);
-                 }}
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    console.log("Files: ", res);
+                    setImageUrl(res)
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR! ${error.message}`);
+                  }}
                 />
-              </div>
+              </>
             </div>
           </div>
 
@@ -230,7 +239,17 @@ const Page = () => {
               onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button className="px-6 py-2 leading-5 ">Save</Button>
+            <Button disabled={isLoading} onClick={()=>{
+              if(imageUrl?.length){
+                createTournoi()
+              }else{
+                toast({
+                  description: "Clicquer d'abord sur le bouton upload",
+                  variant:"destructive"
+                })
+              }
+            }} className="px-6 py-2 leading-5 ">
+              {isLoading? <Loader2 className="h-4 w-4 animate-spin"/>: null}Save</Button>
           </div>
         </form>
       </section>

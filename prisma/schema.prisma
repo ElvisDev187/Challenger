@@ -8,11 +8,12 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Account {
   id                 String  @id @default(cuid())
-  userId             String
+  userId             String  
   type               String
   provider           String
   providerAccountId  String
@@ -32,7 +33,7 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String
+  userId       String   
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -69,6 +70,6 @@ model Tournoi {
  inscriptionLimit String
  cover String
  limit Int?
- userId       String
- user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ userId       String   
+ user         User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
 }
