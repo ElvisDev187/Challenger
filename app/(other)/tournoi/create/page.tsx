@@ -24,12 +24,14 @@ import { useState } from 'react'
 
 const Page = () => {
   const router = useRouter()
-  const [input, setInput] = useState<string>('')
+  const [name, setName] = useState<string>('')
+  const [isFree, setIsFree] = useState<boolean>(true)
   const [open, setOpen] = useState(false)
   const [Ville, setVille] = useState<string>("")
   const [age, setAge] = useState(17)
   const [inscription, setDateIn] = useState<Date>()
   const [debut, setDateDeb] = useState<Date>()
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const { loginToast } = useCustomToasts()
 
@@ -80,7 +82,7 @@ const Page = () => {
           <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
               <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="username">Nom du Tournoi</label>
-              <Input id="username" type="text" className='placeholder:text-slate-900 font-semibold' />
+              <Input value={name} onChange={(e)=>setName(e.target.value)} id="username" type="text" className='placeholder:text-slate-900 font-semibold' />
             </div>
 
             <div>
@@ -178,15 +180,15 @@ const Page = () => {
               </Popover>
             </div>
             <div className="flex items-center space-x-2">
-              <Switch id="airplane-mode" />
-              <label htmlFor="airplane-mode" className='text-slate-700 text-sm font-medium dark:text-gray-200'>Airplane Mode</label>
+              <Switch onClick={()=>setIsFree(prev=> !prev)} id="airplane-mode" />
+              <label htmlFor="airplane-mode" className='text-slate-700 text-sm font-medium dark:text-gray-200'>Inscription payante</label>
             </div>
             <div>
               <label className="text-slate-700 text-sm mb-2 font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Age max : <span className="font-semibold text-slate-900">{age}</span></label>
               <Slider defaultValue={[17]} onValueChange={(e)=> setAge(e[0])} max={100} step={1}/> 
             </div>
             <div>
-              <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Text Area</label>
+              <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Description</label>
               <textarea id="textarea" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></textarea>
             </div>
             <div>
