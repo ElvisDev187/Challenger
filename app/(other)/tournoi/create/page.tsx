@@ -1,7 +1,5 @@
 'use client'
-
-import { ComboBox } from '@/components/ComboBox'
-import { DatePicker } from '@/components/DatePicker'
+import "@uploadthing/react/styles.css";
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
@@ -12,6 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
 import { VILLES } from '@/constants'
 import { useCustomToasts } from '@/hooks/use-custom-toasts'
+import { UploadDropzone } from '@/lib/uploadthing'
 import { cn } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
@@ -196,7 +195,7 @@ const Page = () => {
                 Image
               </label>
               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 bg-indigo-600 border-gray-300 border-dashed rounded-md">
-                <div className="space-y-1 text-center">
+                {/* <div className="space-y-1 text-center">
                   <ImagePlus className='text-white self-center h-10 w-10' color='white'/>
                   <div className="flex text-sm text-gray-600">
                     <label htmlFor="file-upload" className="relative p-1 cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
@@ -208,7 +207,18 @@ const Page = () => {
                   <p className="text-xs text-white">
                     PNG, JPG, GIF up to 10MB
                   </p>
-                </div>
+                </div> */}
+                <UploadDropzone
+                 endpoint="imageUploader"
+                 onClientUploadComplete={(res) => {
+                   // Do something with the response
+                   console.log("Files: ", res);
+                   alert("Upload Completed");
+                 }}
+                 onUploadError={(error: Error) => {
+                   alert(`ERROR! ${error.message}`);
+                 }}
+                />
               </div>
             </div>
           </div>
