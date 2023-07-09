@@ -66,7 +66,7 @@ model Tournoi {
   ageMax           Int
   isFree           Boolean
   debut            String
-  prix             Float? @default(0)
+  prix             Float?    @default(0)
   inscriptionLimit String
   cover            String
   limit            Int?
@@ -74,6 +74,7 @@ model Tournoi {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   teams            Team[]
   arbitres         Arbitre[]
+  tours            Tour[]
 }
 
 model Team {
@@ -117,9 +118,11 @@ model Arbitre {
 
 model Tour {
   id            String   @id @default(cuid())
+  tournoiId     String
   isElimination Boolean
   created_at    DateTime @default(now())
   matchs        Match[]
+  tournoi       Tournoi  @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
 }
 
 model Match {

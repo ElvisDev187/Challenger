@@ -205,8 +205,8 @@ const Page = () => {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="flex items-center space-x-2">
-              <Switch onClick={() => setIsFree(prev => !prev)} id="airplane-mode" />
+            <div className="flex items-center space-x-2 text-slate-700 text-sm font-medium">
+              <Switch onClick={() => setIsFree(prev => !prev)} id="airplane-mode" /> {isFree? "Non": "Oui"}
               <label htmlFor="airplane-mode" className='text-slate-700 text-sm font-medium dark:text-gray-200'>Inscription payante</label>
             </div>
             <div>
