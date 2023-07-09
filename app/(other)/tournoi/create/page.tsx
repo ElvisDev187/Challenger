@@ -15,11 +15,13 @@ import { cn } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import { format } from 'date-fns'
-import { Image, ImagePlus, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { TournoiRequest } from "@/lib/validators/tournoi";
+import Image from "next/image";
+
 
 
 
@@ -29,9 +31,9 @@ const Page = () => {
   const [desc, setDesc] = useState<string>('')
   const [isFree, setIsFree] = useState<boolean>(true)
   const [open, setOpen] = useState(false)
-  const [Ville, setVille] = useState<string>("")
+  const [value, setValue] = useState("")
   const [age, setAge] = useState(17)
-  const [limit, setLimit] = useState()
+  const [limit, setLimit] = useState(0)
   const [inscription, setDateIn] = useState<Date>()
   const [debut, setDateDeb] = useState<Date>()
   const [imageUrl, setImageUrl] = useState<{
@@ -49,7 +51,7 @@ const Page = () => {
         debut: debut?.toLocaleDateString()!,
         inscriptionLimit: inscription?.toLocaleDateString()!,
         description: desc,
-        lieu: Ville,
+        lieu: value,
         ageMax: age,
         cover: imageUrl?.[0].fileUrl!,
         isFree
@@ -114,10 +116,10 @@ const Page = () => {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full h-[40px] justify-between"
+                    className="w-full h-[40px] justify-between text-slate-900"
                   >
-                    {Ville
-                      ? VILLES.find((framework) => framework.value === Ville)?.value
+                    {value
+                      ? VILLES.find((framework) => framework.value.toLocaleLowerCase() === value.toLocaleLowerCase())?.value
                       : "Selectionner une ville..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -129,16 +131,16 @@ const Page = () => {
                     <CommandGroup>
                       {VILLES.map((framework) => (
                         <CommandItem
-                          key={framework.key}
+                          key={framework.value}
                           onSelect={(currentValue) => {
-                            setVille(currentValue === Ville ? "" : currentValue)
+                            setValue(currentValue === value ? "" : currentValue)
                             setOpen(false)
                           }}
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              Ville === framework.value ? "opacity-100" : "opacity-0"
+                              value === framework.value ? "opacity-100" : "opacity-0"
                             )}
                           />
                           {framework.value}
@@ -210,14 +212,21 @@ const Page = () => {
             </div>
             <div>
               <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Description</label>
-              <textarea id="textarea" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></textarea>
+              <textarea id="textarea" value={desc} onChange={(e)=>setDesc(e.target.value)} className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></textarea>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">
                 Image
               </label>
               <>
-                <UploadDropzone
+
+              {imageUrl?.length?
+                <div className="aspect-video w-full overflow-hidden">
+                  <Image width={400} height={150}  src={imageUrl?.[0].fileUrl!} alt="img"/>
+                </div>
+           
+              :
+              <UploadDropzone
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     // Do something with the response
@@ -227,7 +236,9 @@ const Page = () => {
                   onUploadError={(error: Error) => {
                     alert(`ERROR! ${error.message}`);
                   }}
-                />
+                />  
+            }
+                
               </>
             </div>
           </div>
@@ -239,7 +250,8 @@ const Page = () => {
               onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button disabled={isLoading} onClick={()=>{
+            <Button disabled={isLoading} onClick={(e)=>{
+              e.preventDefault()
               if(imageUrl?.length){
                 createTournoi()
               }else{

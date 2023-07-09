@@ -21,7 +21,7 @@ export default function Hero() {
                     Parfait pour vous et vos amis.
                     </p>
 
-                   <Link href={'/tournoi/list'} className={` text-xl mt-5 ${buttonVariants({variant: "outline"})}`}>Explorer les tournois</Link>
+                   <Link href={'/tournoi'} className={` text-xl mt-5 ${buttonVariants({variant: "outline"})}`}>Explorer les tournois</Link>
                 </div>
             </div>
             <div className="xl:flex-[1.5] flex justify-end items-end w-full xl:h-screen">
