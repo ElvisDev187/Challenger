@@ -39,11 +39,11 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href='/'>Feed</Link>
+          <Link href='/tournoi/my'>Mes Tournois</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href='/r/create'>Create Community</Link>
+          <Link href='/tournoi/create'>Creer un tournoi</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>

@@ -6,24 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -33,12 +33,10 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String   
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-
 
 model VerificationToken {
   identifier String
@@ -57,19 +55,103 @@ model User {
   accounts      Account[]
   sessions      Session[]
   tournois      Tournoi[]
+  teams         Team[]
 }
 
 model Tournoi {
- id   String @id @default(cuid())
- name String
- description  String
- lieu String
- ageMax Int
- isFree Boolean
- debut String
- inscriptionLimit String
- cover String
- limit Int?
- userId       String   
- user         User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  id               String    @id @default(cuid())
+  name             String
+  description      String
+  lieu             String
+  ageMax           Int
+  isFree           Boolean
+  debut            String
+  prix             Float? @default(0)
+  inscriptionLimit String
+  cover            String
+  limit            Int?
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teams            Team[]
+  arbitres         Arbitre[]
+}
+
+model Team {
+  id            String      @id @default(cuid())
+  name          String
+  tournoiId     String
+  responsableId String
+  responsable   User        @relation(fields: [responsableId], references: [id], onDelete: Cascade)
+  tournoi       Tournoi     @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  players       Player[]
+  matchIns      Match[]     @relation("locale")
+  matchOuts     Match[]     @relation("exterieur")
+  infoMatchs    InfoMatch[]
+}
+
+model Player {
+  id         String        @id @default(cuid())
+  name       String
+  age        Int
+  poste      PosteFootball
+  teamId     String
+  team       Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  infoMatchs InfoMatch[]
+}
+
+enum PosteFootball {
+  GARDIEN_DE_BUT
+  DEFENSEUR
+  MILIEU_DE_TERRAIN
+  ATTAQUANT
+}
+
+model Arbitre {
+  id        String  @id @default(cuid())
+  name      String
+  email     String
+  tournoiId String
+  tournoi   Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  matchs    Match[]
+}
+
+model Tour {
+  id            String   @id @default(cuid())
+  isElimination Boolean
+  created_at    DateTime @default(now())
+  matchs        Match[]
+}
+
+model Match {
+  id          String      @id @default(cuid())
+  terrain     String
+  date        String
+  heure       String
+  equipeInId  String
+  equipeOutId String
+  arbitreId   String
+  tourId      String
+  equipeIn    Team        @relation(fields: [equipeInId], references: [id], onDelete: Cascade, name: "locale")
+  equipeOut   Team        @relation(fields: [equipeOutId], references: [id], onDelete: Cascade, name: "exterieur")
+  arbitre     Arbitre     @relation(fields: [arbitreId], references: [id], onDelete: Cascade)
+  tour        Tour        @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  infoMatchs  InfoMatch[]
+}
+
+model InfoMatch {
+  id       String        @id @default(cuid())
+  type     InfoMatchType
+  minute   Int
+  equipeId String
+  playerId String
+  matchId  String
+  equipe   Team          @relation(fields: [equipeId], references: [id], onDelete: Cascade)
+  player   Player        @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  match    Match         @relation(fields: [matchId], references: [id], onDelete: Cascade)
+}
+
+enum InfoMatchType {
+  BUT
+  CARTON_JAUNE
+  CARTON_ROUGE
 }

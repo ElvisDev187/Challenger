@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { TournoiRequest } from "@/lib/validators/tournoi";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 
 
@@ -90,9 +91,11 @@ const Page = () => {
       })
     },
     onSuccess: (data: any) => {
-      // router.push(`/r/${data}`)
-      console.log(data);
       
+      toast({
+        description: 'Nouveou tournoi creer avec success',
+      })
+      router.push(`/tournoi/my`)
     },
   })
 
@@ -212,7 +215,7 @@ const Page = () => {
             </div>
             <div>
               <label className="text-slate-700 text-sm font-medium dark:text-gray-200" htmlFor="passwordConfirmation">Description</label>
-              <textarea id="textarea" value={desc} onChange={(e)=>setDesc(e.target.value)} className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></textarea>
+              <Textarea id="textarea" value={desc} onChange={(e)=>setDesc(e.target.value)} className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"></Textarea>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">

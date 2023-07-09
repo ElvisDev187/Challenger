@@ -5,7 +5,12 @@ import { z } from 'zod'
 
 export async function GET(req: Request) {
   try {
-   const tournois = await db.tournoi.findMany({take: 10})
+   const tournois = await db.tournoi.findMany({take: 10, 
+    include: {
+      teams: true,
+      user: true,
+      arbitres: true
+   }})
    return new Response(JSON.stringify(tournois))
   } catch (error) {
 
