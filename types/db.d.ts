@@ -1,9 +1,10 @@
-import type { Tournoi , User, Team, Arbitre, Player, Match, InfoMatch} from "@prisma/client";
+import type { Tournoi , User, Team, Arbitre, Player, Match, InfoMatch, Assistant} from "@prisma/client";
 
 export type ExtendedTournoi = Tournoi & {
     user: User
     teams: Team[] | undefined
-    arbitres: Arbitre[] | undefined
+    arbitres: Arbitre[] | undefined,
+    assistants: Assistant[]
 }
 
 export type ExtendedTeam = Team & {

@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import General from './General'
+import Admin from './Admin'
 interface PageProps {
   params: {
     id: string
@@ -15,6 +17,7 @@ export default async function page({ params: { id } }: PageProps) {
       id: id
     },
     include: {
+      user: true,
       teams: {
         include: {
           responsable: true
@@ -25,31 +28,17 @@ export default async function page({ params: { id } }: PageProps) {
         include: {
           matchs: true
         }
-      }
+      },
+      assistants: true
     }
   })
 
   if (!tournoi) return notFound();
+  
 
   return (
-    <>
-      <h1 className='font-bold text-3xl md:text-4xl h-14'>
-        {tournoi.name}
-      </h1>
-      <section className='w-full flex flex-col h-fit mt-8 items-start gap-5 justify-center'>
-        <div className='aspect-video relative w-[600px]'>
-          <Image
-            fill
-            src={tournoi.cover}
-            alt='profile picture'
-            referrerPolicy='no-referrer'
-          />
-        </div>
-        <div className='w-full'>
-            <p className='text-slate-700 text-md leading-3'>{tournoi.description}</p>
-        </div>
-      </section>
-      {/* arbre pour le tournoi */}
+    <> 
+      {tournoi.userId !== session?.user.id? <General tournoi={tournoi}/> : <Admin tournoi={tournoi}/>}
     </>
   )
 }

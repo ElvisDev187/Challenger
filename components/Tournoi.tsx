@@ -5,9 +5,14 @@ import React from 'react'
 import { Banknote, MapIcon, MapPin, UserCheck, Users } from 'lucide-react'
 import type { ExtendedTournoi } from '@/types/db'
 
-export default function TournoiCard({ id, cover, isFree, name, lieu, ageMax, teams, prix }: ExtendedTournoi) {
+interface CardProps{
+    tournoi: ExtendedTournoi,
+    staff: boolean | undefined
+}
+
+export default function TournoiCard({ tournoi:{ id, cover, isFree, name, lieu, ageMax, teams, prix }, staff}: CardProps) {
     return (
-        <Link href={`/tournoi/${id}`} passHref>
+        <Link href={staff?`/tournoi/${id}/staff`:`/tournoi/${id}`} passHref>
             <div className='flex flex-wrap p-5  justify-start cursor-pointer shadow-md rounded-md border bg-white'>
                 <div className='w-[400px] h-[260px] overflow-hidden rounded-sm '>
                     <Image src={cover} width={400} height={260} alt='cover' className='object-cover' />

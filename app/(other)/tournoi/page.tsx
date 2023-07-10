@@ -30,7 +30,7 @@ export default function page() {
         :
         <>
           {data?.length && data.map((tournoi)=>(
-            <TournoiCard {...tournoi} key={tournoi.id}/>
+            <TournoiCard staff={false}  tournoi={tournoi} key={tournoi.id}/>
           ))}
         </>
       }
