@@ -2,18 +2,18 @@ import { buttonVariants } from '@/components/ui/button'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
-import { Metadata } from 'next'
+import { GetServerSidePropsContext, Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React, { ReactNode } from 'react'
-
 export const metadata: Metadata = {
-    title: 'Challenger | ',
+    title: 'Challengers',
     description: 'A Reddit clone built with Next.js and TypeScript.',
 }
 interface pageProps {
     children: ReactNode,
-    params: { id: string }
+    params: { id: string },
+ 
 }
 export default async function layout({ children, params: { id } }: pageProps) {
     const session = await getAuthSession()
@@ -31,24 +31,16 @@ export default async function layout({ children, params: { id } }: pageProps) {
         }
     })
 
-    const inscription = await db.tournoi.findFirst({
+    const inscription = await db.team.findFirst({
         where: {
-            AND: [
-                {
-                    id: id
-                },
-                {
-                    teams: {
-                        some: {
-                            responsableId: session?.user.id || ""
-                        }
-                    }
-                }
-            ]
+            tournoiId: id,
+            responsableId: session?.user.id
         }
     })
     const isSubscribed = !!inscription
     if (!tournoi) return notFound()
+
+    
     return (
         <div className='sm:container max-w-7xl mx-auto h-full pt-12'>
             <div>
@@ -63,13 +55,13 @@ export default async function layout({ children, params: { id } }: pageProps) {
                             <div className='flex justify-between gap-x-4 py-3'>
                                 <dt className='text-gray-500'>Cloture d'inscription</dt>
                                 <dd className='text-gray-700'>
-                                    <div className='text-gray-900 font-medium'>{tournoi.inscriptionLimit}</div>
+                                    <div className='text-gray-900 font-medium'>{ format(Date.now(), "dd MMMM yyyy")}</div>
                                 </dd>
                             </div>
                             <div className='flex justify-between gap-x-4 py-3'>
                                 <dt className='text-gray-500'>Ouverture</dt>
                                 <dd className='text-gray-700'>
-                                    <div className='text-gray-900 font-medium'>{tournoi.debut}</div>
+                                    <div className='text-gray-900 font-medium'>{}</div>
                                 </dd>
                             </div>
                             <div className='flex justify-between gap-x-4 py-3'>
@@ -91,7 +83,7 @@ export default async function layout({ children, params: { id } }: pageProps) {
                             ) : null}
                             {isSubscribed ?
 
-                                <Link href={`/tournoi/${id}/myTeam`} className={buttonVariants({
+                                <Link href={`/tournoi/${id}/team/${inscription.id}`} className={buttonVariants({
                                     variant: "default",
                                     className: "w-full mb-6"
                                 })}>
@@ -104,7 +96,7 @@ export default async function layout({ children, params: { id } }: pageProps) {
                                             variant: "default",
                                             className: "w-full mb-6"
                                         })}>
-                                            Inscrivez votre equipe
+                                            Inscrivez votre equipe 
                                         </Link>
                                         :
                                         null
@@ -119,3 +111,4 @@ export default async function layout({ children, params: { id } }: pageProps) {
         </div>
     )
 }
+

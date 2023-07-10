@@ -11,7 +11,7 @@ interface UserAvatarProps extends AvatarProps {
 
 export function UserAvatar({ user, ...props }: UserAvatarProps) {
   return (
-    <Avatar {...props}>
+    <Avatar className='h-14 w-14' {...props}>
       {user.image ? (
         <div className='relative aspect-square h-full w-full'>
           <Image

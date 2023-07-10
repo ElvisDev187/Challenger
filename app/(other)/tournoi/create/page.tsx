@@ -103,7 +103,7 @@ const Page = () => {
     <>
       <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 mt-10">
         <h1 className="text-xl text-center font-bold py-5 text-slate-900 capitalize dark:text-white">Créer un Tournoi</h1>
-        <hr className='bg-red-500 h-px' />
+        <hr className='bg-gray-500 h-px' />
         <form>
           <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
