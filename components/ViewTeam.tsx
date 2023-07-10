@@ -10,7 +10,6 @@ interface props {
 }
 export default function ViewTeam({teamId, tournoiId}:props) {
     const path = usePathname()
-    console.log(path);
     
   return (
     <Link  href={`/tournoi/${tournoiId}/team/${teamId}`} className={buttonVariants({

@@ -22,9 +22,9 @@ export default function Admin({ tournoi }: Props) {
                     <h1 className='font-medium text-lg md:text-xl h-10'>
                         Arbitres ({tournoi.arbitres?.length})
                     </h1>
-                    <Link href={``} className={buttonVariants({
+                    <Link href={`/tournoi/${tournoi.id}/staff`} className={buttonVariants({
                         variant: "default",
-                        class: "bg-emerald-400 flex items-center justify-center my-5"
+                        class: "bg-emerald-400 flex items-center justify-center my-5 gap-1"
                     })}>
                         <PlusCircle className='h-6 w-6' />
                         Ajouter
@@ -32,9 +32,9 @@ export default function Admin({ tournoi }: Props) {
                     <h1 className='font-medium text-lg md:text-xl h-10'>
                         Assistants ({tournoi.assistants?.length})
                     </h1>
-                    <Link href={``} className={buttonVariants({
+                    <Link href={`/tournoi/${tournoi.id}/staff`} className={buttonVariants({
                         variant: "default",
-                        class: "bg-emerald-400 flex items-center justify-center my-5"
+                        class: "bg-emerald-400  flex items-center justify-center my-5 gap-1"
                     })}>
                         <PlusCircle className='h-6 w-6' />
                         Ajouter
