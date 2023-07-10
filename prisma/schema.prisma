@@ -59,22 +59,23 @@ model User {
 }
 
 model Tournoi {
-  id               String    @id @default(cuid())
+  id               String      @id @default(cuid())
   name             String
   description      String
   lieu             String
   ageMax           Int
   isFree           Boolean
   debut            String
-  prix             Float?    @default(0)
+  prix             Float?      @default(0)
   inscriptionLimit String
   cover            String
   limit            Int?
   userId           String
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   teams            Team[]
   arbitres         Arbitre[]
   tours            Tour[]
+  assistants       Assistant[]
 }
 
 model Team {
@@ -116,6 +117,15 @@ model Arbitre {
   matchs    Match[]
 }
 
+model Assistant {
+  id        String  @id @default(cuid())
+  name      String
+  email     String
+  tournoiId String
+  tournoi   Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  matchs    Match[]
+}
+
 model Tour {
   id            String   @id @default(cuid())
   tournoiId     String
@@ -134,11 +144,14 @@ model Match {
   equipeOutId String
   arbitreId   String
   tourId      String
+  status      StatusMatch
   equipeIn    Team        @relation(fields: [equipeInId], references: [id], onDelete: Cascade, name: "locale")
   equipeOut   Team        @relation(fields: [equipeOutId], references: [id], onDelete: Cascade, name: "exterieur")
   arbitre     Arbitre     @relation(fields: [arbitreId], references: [id], onDelete: Cascade)
   tour        Tour        @relation(fields: [tourId], references: [id], onDelete: Cascade)
   infoMatchs  InfoMatch[]
+  Assistant   Assistant   @relation(fields: [assistantId], references: [id])
+  assistantId String
 }
 
 model InfoMatch {
@@ -157,4 +170,11 @@ enum InfoMatchType {
   BUT
   CARTON_JAUNE
   CARTON_ROUGE
+}
+
+enum StatusMatch {
+  EN_COURS
+  TERMINE
+  ATTENTE
+  REPORTE
 }
