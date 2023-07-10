@@ -23,7 +23,7 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={false} tournoi={tournoi} key={tournoi.id} />
                     ))}
 
-                    {Mytournois.length == 0 && (
+                    {Mytournois.length === 0 && (
                         <h1 className='font-bold text-3xl md:text-4xl h-14'>
                             Rien pour le moment
                         </h1>
@@ -38,7 +38,7 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={false} tournoi={tournoi} key={tournoi.id} />
 
                     ))}
-                     {MyResponsabilities.length == 0 && (
+                     {MyResponsabilities.length === 0 && (
                         <h1 className='font-bold text-3xl md:text-4xl h-14'>
                             Rien pour le moment
                         </h1>
@@ -52,7 +52,7 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={true} tournoi={tournoi} key={tournoi.id} />
 
                     ))}
-                     {MysTaff.length == 0 && (
+                     {MysTaff.length === 0 && (
                         <h1 className='font-bold text-3xl md:text-4xl h-14'>
                             Rien pour le moment
                         </h1>

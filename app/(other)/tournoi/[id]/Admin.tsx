@@ -1,3 +1,4 @@
+"use client"
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ExtendedTournoi } from '@/types/db'
