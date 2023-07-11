@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import * as nodemailer from "nodemailer";
 
 const email = process.env.EMAIL_SERVER_USER;
 const pass = process.env.EMAIL_SERVER_PASSWORD;
@@ -15,7 +15,7 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-export const generateEmailContent = ( role, name, Tname) => {
+export const generateEmailContent = ( role: string, name: string, Tname: string) => {
  
   return {
     text: role,

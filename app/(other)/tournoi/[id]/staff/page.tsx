@@ -117,14 +117,14 @@ export default function page({ params }: PageProps) {
                                     >
                                         {role
                                             ? Roles.find((framework) => framework.value.toLocaleLowerCase() === role.toLocaleLowerCase())?.label
-                                            : "Selectionner une ville..."}
+                                            : "Selectionner son role"}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-[200px] p-0 max-h-[250px]">
                                     <Command className='max-h-[250px]'>
-                                        <CommandInput placeholder="Chercher votre ville" />
-                                        <CommandEmpty>No framework found.</CommandEmpty>
+                                        <CommandInput placeholder="Chercher.." />
+                                        <CommandEmpty>Aucune correspondance.</CommandEmpty>
                                         <CommandGroup>
                                             {Roles.map((framework) => (
                                                 <CommandItem
@@ -161,7 +161,7 @@ export default function page({ params }: PageProps) {
                             e.preventDefault()
                             addStaff()
                         }} className="px-6 py-2 leading-5 ">
-                            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}Save</Button>
+                            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}Save</Button>
                     </div>
                 </form>
             </section>

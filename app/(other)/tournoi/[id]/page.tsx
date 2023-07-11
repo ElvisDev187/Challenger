@@ -29,7 +29,8 @@ export default async function page({ params: { id } }: PageProps) {
           matchs: true
         }
       },
-      assistants: true
+      assistants: true,
+      
     }
   })
 

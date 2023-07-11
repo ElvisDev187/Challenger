@@ -23,13 +23,12 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={false} tournoi={tournoi} key={tournoi.id} />
                     ))}
 
-                    {Mytournois.length === 0 && (
-                        <h1 className='font-bold text-3xl md:text-4xl h-14'>
-                            Rien pour le moment
-                        </h1>
-                    )}
-
                 </div>
+                {Mytournois.length === 0 && (
+                    <h1 className='font-bold text-center text-3xl md:text-4xl h-14'>
+                        Rien pour le moment
+                    </h1>
+                )}
             </TabsContent>
             <TabsContent value="participate">
                 <div className='mt-5 grid grid-cols-3 p-7 w-full gap-5'>
@@ -38,12 +37,13 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={false} tournoi={tournoi} key={tournoi.id} />
 
                     ))}
-                     {MyResponsabilities.length === 0 && (
-                        <h1 className='font-bold text-3xl md:text-4xl h-14'>
-                            Rien pour le moment
-                        </h1>
-                    )}
+
                 </div>
+                {MyResponsabilities.length === 0 && (
+                    <h1 className='font-bold text-center text-3xl md:text-4xl h-14'>
+                        Rien pour le moment
+                    </h1>
+                )}
             </TabsContent>
             <TabsContent value="staff">
                 <div className='mt-5 grid grid-cols-3 p-7 w-full gap-5'>
@@ -52,12 +52,13 @@ export default function Feed({ MyResponsabilities, Mytournois, MysTaff }: FeedPr
                         <TournoiCard staff={true} tournoi={tournoi} key={tournoi.id} />
 
                     ))}
-                     {MysTaff.length === 0 && (
-                        <h1 className='font-bold text-3xl md:text-4xl h-14'>
-                            Rien pour le moment
-                        </h1>
-                    )}
+
                 </div>
+                {MysTaff.length === 0 && (
+                    <h1 className='font-bold text-center text-3xl md:text-4xl h-14'>
+                        Rien pour le moment
+                    </h1>
+                )}
             </TabsContent>
         </Tabs>
     )

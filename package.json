@@ -53,5 +53,8 @@
     "uploadthing": "^5.1.0",
     "xlsx": "^0.18.5",
     "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.8"
   }
 }
