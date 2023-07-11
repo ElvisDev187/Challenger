@@ -70,6 +70,7 @@ model Tournoi {
   inscriptionLimit String
   cover            String
   limit            Int?
+  mode             Mode?
   userId           String
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   teams            Team[]
@@ -83,6 +84,8 @@ model Team {
   name          String
   tournoiId     String
   responsableId String
+  pouleId       String?
+  poule         Poule?       @relation(fields: [pouleId], references: [id])
   responsable   User        @relation(fields: [responsableId], references: [id], onDelete: Cascade)
   tournoi       Tournoi     @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
   players       Player[]
@@ -135,6 +138,13 @@ model Tour {
   tournoi       Tournoi  @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
 }
 
+model Poule {
+  id    String @id @default(cuid())
+  label String
+
+  Team Team[]
+}
+
 model Match {
   id          String      @id @default(cuid())
   terrain     String
@@ -177,4 +187,10 @@ enum StatusMatch {
   TERMINE
   ATTENTE
   REPORTE
+}
+
+enum Mode {
+  GROUP
+  DOUBLE
+  SIMPLE
 }

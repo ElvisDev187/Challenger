@@ -1,12 +1,14 @@
 "use client"
 import { Button, buttonVariants } from '@/components/ui/button'
+import { HoverCard, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { useCustomToasts } from '@/hooks/use-custom-toasts'
 import { PlayerPayload, TeamPayload } from '@/lib/validators/team'
+import { HoverCardContent } from '@radix-ui/react-hover-card'
 import { useMutation } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
-import { Loader2 } from 'lucide-react'
+import { Info, Loader2 } from 'lucide-react'
 import { getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
@@ -16,7 +18,7 @@ interface PageProps {
     id: string
   }
 }
-export default  function page({ params: { id} }: PageProps) {
+export default function page({ params: { id } }: PageProps) {
   const [data, setdata] = useState<any>()
   const [name, setName] = useState<string>('')
   const [tel, setTel] = useState<string>('')
@@ -28,22 +30,22 @@ export default  function page({ params: { id} }: PageProps) {
 
   const { mutate: CreateTeam, isLoading } = useMutation(
     async () => {
-      const players: PlayerPayload[] = data.map((player: any)=> {
+      const players: PlayerPayload[] = data.map((player: any) => {
         return {
           name: player.Nom,
           age: parseInt(player.Age),
           poste: player.Poste
         }
       })
-     const payload : TeamPayload = {
-      palyer: players,
-      name: name,
-      tournoiId: id
-     }
+      const payload: TeamPayload = {
+        palyer: players,
+        name: name,
+        tournoiId: id
+      }
 
-     const { data: res } = await axios.post('/api/tournoi/teams', payload)
+      const { data: res } = await axios.post('/api/tournoi/teams', payload)
       return res as string
-      
+
     },
     {
       onError: (err: any) => {
@@ -118,6 +120,25 @@ export default  function page({ params: { id} }: PageProps) {
 
               <a href='/template.xlsx' id="template" download className={buttonVariants({ variant: "default", className: "bg-emerald-500" })}>Telecharger template.xlsx</a>
             </div>
+            <HoverCard>
+              <HoverCardTrigger>
+                <div className='flex items-center justify-center p-3 gap-2'>
+                  <Info className='h-5 w-5 text-slate-500'/>
+                  <p className='font-semibold text-sm text-slate-900'>Instructions</p>
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 mt-5">
+                  <ol className='w-full text-md font-light text-slate-900 list-decimal'>
+                    <li>Lisez la notice de consentement pour les emails</li>
+                    <li>Inscrivez le nom de votre equipe</li>
+                    <li>Telechargez le template excel et remplissez le correctement (min 11 joueurs)</li>
+                    <li>Choisissez le et cliquez sur Save.</li>
+                  </ol>
+                </section>
+              </HoverCardContent>
+            </HoverCard>
+
           </div>
           <div className="flex justify-end mt-6 gap-4">
             <Button
@@ -129,24 +150,15 @@ export default  function page({ params: { id} }: PageProps) {
             <Button disabled={isLoading} onClick={(e) => {
               e.preventDefault()
               console.log(data);
-              
-             CreateTeam()
+
+              CreateTeam()
 
             }} className="px-6 py-2 leading-5 ">
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}Save</Button>
           </div>
         </form>
       </section>
-      <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 mt-5">
-        <h1 className="text-xl text-center font-bold pt-5 pb-3 text-slate-900 capitalize dark:text-white">Instructions</h1>
-        <hr className='bg-gray-500 h-px' />
-        <ol className='w-full text-md font-light text-slate-900 list-decimal'>
-          <li>Lisez la notice de consentement pour les emails</li>
-          <li>Inscrivez le nom de votre equipe</li>
-          <li>Telechargez le template excel et remplissez le correctement (min 11 joueurs)</li>
-          <li>Choisissez le et cliquez sur Save.</li>
-        </ol>
-      </section>
+
     </>
 
   )
