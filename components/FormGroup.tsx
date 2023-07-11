@@ -7,35 +7,21 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from "./ui/checkbox"
 import { Button } from "./ui/button"
 import { useToast } from "./ui/use-toast"
+import { useCustomToasts } from "@/hooks/use-custom-toasts"
+import { useMutation } from "@tanstack/react-query"
+import axios, { AxiosError } from "axios"
+import { Loader2 } from "lucide-react"
+
+type item = {
+    id: string
+    label: string
+}
+interface Props {
+    teams: item[] | undefined,
+    tournoiId: string
+}
 
 
-
-const items = [
-    {
-        id: "recents",
-        label: "Recents",
-    },
-    {
-        id: "home",
-        label: "Home",
-    },
-    {
-        id: "applications",
-        label: "Applications",
-    },
-    {
-        id: "desktop",
-        label: "Desktop",
-    },
-    {
-        id: "downloads",
-        label: "Downloads",
-    },
-    {
-        id: "documents",
-        label: "Documents",
-    },
-] as const
 
 const displayFormSchema = z.object({
     items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -43,29 +29,68 @@ const displayFormSchema = z.object({
     }),
 })
 
-type DisplayFormValues = z.infer<typeof displayFormSchema>
+ type DisplayFormValues = z.infer<typeof displayFormSchema>
 
-// This can come from your database or API.
-const defaultValues: Partial<DisplayFormValues> = {
-    items: ["recents", "home"],
-}
+ export const groupValidator = z.object({
+    tournoiId: z.string(),
+     items: z.array(z.string()).refine((value) => value.some((item) => item), {
+        message: "You have to select at least one item.",
+    }),
+ })
+ type GroupPayload = z.infer<typeof groupValidator>
 
-export default function FormGroup() {
+export default function FormGroup({ teams , tournoiId}: Props) {
+
     const { toast } = useToast()
     const form = useForm<DisplayFormValues>({
         resolver: zodResolver(displayFormSchema),
-        defaultValues,
+    })
+    const { loginToast } = useCustomToasts()
+    const { mutate: CreateGroup, isLoading } = useMutation({
+        mutationFn: async (items: string[]) => {
+            const payload: GroupPayload = {
+                items,
+                tournoiId
+            }
+
+            const { data } = await axios.post('/api/tournoi/create', payload)
+            return data as string
+        },
+        onError: (err: any) => {
+            if (err instanceof AxiosError) {
+
+                if (err.response?.status === 401) {
+                    return loginToast()
+                }
+            }
+
+            toast({
+                title: 'There was an error.',
+                description: 'Could not delete.',
+                variant: 'destructive',
+            })
+        },
+        onSuccess: (data: any) => {
+           
+            toast({
+                description: `Le Group ${data} a ete creer avec succes`,
+            })
+
+        },
     })
 
     function onSubmit(data: DisplayFormValues) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
+         CreateGroup(data.items)
+        // toast({
+        //     title: "You submitted the following values:",
+        //     description: (
+        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        //         </pre>
+        //     ),
+        // })
+
+
     }
 
     return (
@@ -82,7 +107,7 @@ export default function FormGroup() {
                                     Selectionner un nombre paire d'equipe pour former un groupe
                                 </FormDescription>
                             </div>
-                            {items.map((item) => (
+                            {teams?.map((item) => (
                                 <FormField
                                     key={item.id}
                                     control={form.control}
@@ -120,8 +145,10 @@ export default function FormGroup() {
                     )}
                 />
                 <div className="flex gap-4">
-                    <Button type="submit">Former</Button>
-                    <Button variant="outline">Annuler</Button>
+                    <Button type="submit" disabled={isLoading}>
+                       {isLoading? <Loader2 className="h-5 w-5 mr-2 animate-spin" />: null} Former
+                    </Button>
+                    <Button variant="outline" disabled={isLoading}>Annuler</Button>
                 </div>
             </form>
         </Form>

@@ -1,5 +1,6 @@
 "use client"
 import FormGroup from '@/components/FormGroup'
+import StaffCard from '@/components/StaffCard'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ExtendedTournoi } from '@/types/db'
@@ -12,10 +13,16 @@ interface Props {
 }
 export default function Admin({ tournoi }: Props) {
     const [isFormGroupOpen, setIsformGroupOpen] = useState(false)
+
     const nbMatch = tournoi.tours?.reduce((acc, tour) => {
         if (tour.matchs?.length) acc + tour.matchs.length
         return acc
     }, 0)
+    const teamWithOutGroup = tournoi.teams?.filter((team) => team.pouleId != null)
+        .map((team) => {
+            return { id: team.id, label: team.name }
+        })
+
     return (
         <Tabs defaultValue="staff" className="w-full">
             <TabsList>
@@ -33,10 +40,7 @@ export default function Admin({ tournoi }: Props) {
                         {
                             tournoi.arbitres?.map((arbitre) => {
                                 return (
-                                    <div className='bg-white p-3 rounded-sm flex flex-col gap-2 shadow-md text-sm font-medium text-slate-900 ' key={arbitre.id}>
-                                        <p> {arbitre.name}</p>
-                                        <p> {arbitre.email}</p>
-                                    </div>
+                                   <StaffCard tournoiId={arbitre.tournoiId} key={arbitre.id} name={arbitre.name} email={arbitre.email} id={arbitre.id} role='ARBITRE'/>
                                 )
                             })
                         }
@@ -49,10 +53,8 @@ export default function Admin({ tournoi }: Props) {
                         {
                             tournoi.assistants?.map((assistant) => {
                                 return (
-                                    <div className='bg-white p-3 rounded-sm flex flex-col gap-2 text-sm shadow-md font-medium text-slate-900 ' key={assistant.id}>
-                                        <p>{assistant.name}</p>
-                                        <p>  {assistant.email}</p>
-                                    </div>
+                                    <StaffCard tournoiId={assistant.tournoiId} key={assistant.id} name={assistant.name} email={assistant.email} id={assistant.id} role='ASSISTANT'/>
+
                                 )
                             })
                         }
@@ -79,7 +81,7 @@ export default function Admin({ tournoi }: Props) {
             <TabsContent value="stat">
                 <>
                     {isFormGroupOpen ?
-                        <FormGroup />
+                        <FormGroup teams={teamWithOutGroup!} tournoiId={tournoi.id} />
                         :
                         <>
                             <h1 className='font-medium text-lg md:text-xl h-10'>

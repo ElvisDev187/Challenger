@@ -77,6 +77,7 @@ model Tournoi {
   arbitres         Arbitre[]
   tours            Tour[]
   assistants       Assistant[]
+  groups           Poule[]
 }
 
 model Team {
@@ -85,7 +86,7 @@ model Team {
   tournoiId     String
   responsableId String
   pouleId       String?
-  poule         Poule?       @relation(fields: [pouleId], references: [id])
+  poule         Poule?      @relation(fields: [pouleId], references: [id])
   responsable   User        @relation(fields: [responsableId], references: [id], onDelete: Cascade)
   tournoi       Tournoi     @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
   players       Player[]
@@ -139,10 +140,11 @@ model Tour {
 }
 
 model Poule {
-  id    String @id @default(cuid())
-  label String
-
-  Team Team[]
+  id        String  @id @default(cuid())
+  label     String
+  tournoiId String
+  tournoi   Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  Team      Team[]
 }
 
 model Match {
