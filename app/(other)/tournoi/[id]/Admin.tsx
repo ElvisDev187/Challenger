@@ -1,9 +1,12 @@
 "use client"
 import FormGroup from '@/components/FormGroup'
+import GroupCard from '@/components/GroupCard'
 import StaffCard from '@/components/StaffCard'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useFormGroup } from '@/context/store'
 import { ExtendedTournoi } from '@/types/db'
+import { group } from 'console'
 import { PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -12,13 +15,13 @@ interface Props {
     tournoi: ExtendedTournoi
 }
 export default function Admin({ tournoi }: Props) {
-    const [isFormGroupOpen, setIsformGroupOpen] = useState(false)
+    const { isOpen, toggle } = useFormGroup()
 
     const nbMatch = tournoi.tours?.reduce((acc, tour) => {
         if (tour.matchs?.length) acc + tour.matchs.length
         return acc
     }, 0)
-    const teamWithOutGroup = tournoi.teams?.filter((team) => team.pouleId != null)
+    const teamWithOutGroup = tournoi.teams?.filter((team) => team.pouleId === null)
         .map((team) => {
             return { id: team.id, label: team.name }
         })
@@ -40,7 +43,7 @@ export default function Admin({ tournoi }: Props) {
                         {
                             tournoi.arbitres?.map((arbitre) => {
                                 return (
-                                   <StaffCard tournoiId={arbitre.tournoiId} key={arbitre.id} name={arbitre.name} email={arbitre.email} id={arbitre.id} role='ARBITRE'/>
+                                    <StaffCard tournoiId={arbitre.tournoiId} key={arbitre.id} name={arbitre.name} email={arbitre.email} id={arbitre.id} role='ARBITRE' />
                                 )
                             })
                         }
@@ -53,7 +56,7 @@ export default function Admin({ tournoi }: Props) {
                         {
                             tournoi.assistants?.map((assistant) => {
                                 return (
-                                    <StaffCard tournoiId={assistant.tournoiId} key={assistant.id} name={assistant.name} email={assistant.email} id={assistant.id} role='ASSISTANT'/>
+                                    <StaffCard tournoiId={assistant.tournoiId} key={assistant.id} name={assistant.name} email={assistant.email} id={assistant.id} role='ASSISTANT' />
 
                                 )
                             })
@@ -80,14 +83,34 @@ export default function Admin({ tournoi }: Props) {
             </TabsContent>
             <TabsContent value="stat">
                 <>
-                    {isFormGroupOpen ?
+                    {isOpen ?
                         <FormGroup teams={teamWithOutGroup!} tournoiId={tournoi.id} />
                         :
                         <>
                             <h1 className='font-medium text-lg md:text-xl h-10'>
                                 Equipes ({tournoi?.teams?.length || 0})
                             </h1>
-                            <Button className='flex items-center justify-center my-5 gap-1' onClick={() => setIsformGroupOpen(true)}>
+
+                            <div className='mt-1 grid grid-cols-3 p-7 w-full gap-5' >
+                                {
+                                    tournoi.teams?.map((team) => {
+                                        return (
+                                            <div className='bg-white p-3 rounded-sm flex flex-col shadow-md text-sm font-medium text-slate-900 ' key={team.id}>
+                                                <p> {team.name}</p>
+                                            </div>
+
+                                        )
+                                    })
+                                }
+                            </div>
+                            <h1 className='font-medium text-lg md:text-xl h-10'>
+                                Groupes ({tournoi?.groups?.length})
+                            </h1>
+                            <div className='mt-1 grid grid-cols-2 p-7 w-full gap-3' >
+                                {tournoi.groups?.map((group) => (<GroupCard group={group} key={group.id} />))}
+                            </div>
+                            {teamWithOutGroup?.length}
+                            <Button className='flex items-center justify-center my-5 gap-1' onClick={() => toggle(true)}>
                                 <PlusCircle className='h-6 w-6' />
                                 Former un groupe
                             </Button>

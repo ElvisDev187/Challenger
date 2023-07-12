@@ -30,6 +30,11 @@ export default async function page({ params: { id } }: PageProps) {
         }
       },
       assistants: true,
+      groups: {
+        include:{
+          Team: true
+        }
+      }
       
     }
   })

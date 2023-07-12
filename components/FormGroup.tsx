@@ -11,6 +11,8 @@ import { useCustomToasts } from "@/hooks/use-custom-toasts"
 import { useMutation } from "@tanstack/react-query"
 import axios, { AxiosError } from "axios"
 import { Loader2 } from "lucide-react"
+import { DisplayFormValues, GroupPayload, displayFormSchema } from "@/lib/validators/group"
+import { useFormGroup } from "@/context/store"
 
 type item = {
     id: string
@@ -23,27 +25,17 @@ interface Props {
 
 
 
-const displayFormSchema = z.object({
-    items: z.array(z.string()).refine((value) => value.some((item) => item), {
-        message: "You have to select at least one item.",
-    }),
-})
 
- type DisplayFormValues = z.infer<typeof displayFormSchema>
-
- export const groupValidator = z.object({
-    tournoiId: z.string(),
-     items: z.array(z.string()).refine((value) => value.some((item) => item), {
-        message: "You have to select at least one item.",
-    }),
- })
- type GroupPayload = z.infer<typeof groupValidator>
-
-export default function FormGroup({ teams , tournoiId}: Props) {
+export default function FormGroup({ teams, tournoiId }: Props) {
+    const items = [...teams!] as const
+   const {isOpen, toggle} = useFormGroup()
 
     const { toast } = useToast()
     const form = useForm<DisplayFormValues>({
         resolver: zodResolver(displayFormSchema),
+        defaultValues: {
+            items: []
+        }
     })
     const { loginToast } = useCustomToasts()
     const { mutate: CreateGroup, isLoading } = useMutation({
@@ -53,7 +45,7 @@ export default function FormGroup({ teams , tournoiId}: Props) {
                 tournoiId
             }
 
-            const { data } = await axios.post('/api/tournoi/create', payload)
+            const { data } = await axios.post('/api/tournoi/group', payload)
             return data as string
         },
         onError: (err: any) => {
@@ -71,7 +63,7 @@ export default function FormGroup({ teams , tournoiId}: Props) {
             })
         },
         onSuccess: (data: any) => {
-           
+
             toast({
                 description: `Le Group ${data} a ete creer avec succes`,
             })
@@ -80,17 +72,17 @@ export default function FormGroup({ teams , tournoiId}: Props) {
     })
 
     function onSubmit(data: DisplayFormValues) {
-         CreateGroup(data.items)
-        // toast({
-        //     title: "You submitted the following values:",
-        //     description: (
-        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        //             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        //         </pre>
-        //     ),
-        // })
-
-
+        CreateGroup(data.items)
+        toast({
+            title: "You submitted the following values:",
+            description: (
+                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                </pre>
+            ),
+        })
+        form.reset()
+        toggle(false)
     }
 
     return (
@@ -107,7 +99,7 @@ export default function FormGroup({ teams , tournoiId}: Props) {
                                     Selectionner un nombre paire d'equipe pour former un groupe
                                 </FormDescription>
                             </div>
-                            {teams?.map((item) => (
+                            {items?.map((item) => (
                                 <FormField
                                     key={item.id}
                                     control={form.control}
@@ -146,7 +138,7 @@ export default function FormGroup({ teams , tournoiId}: Props) {
                 />
                 <div className="flex gap-4">
                     <Button type="submit" disabled={isLoading}>
-                       {isLoading? <Loader2 className="h-5 w-5 mr-2 animate-spin" />: null} Former
+                        {isLoading ? <Loader2 className="h-5 w-5 mr-2 animate-spin" /> : null} Former
                     </Button>
                     <Button variant="outline" disabled={isLoading}>Annuler</Button>
                 </div>

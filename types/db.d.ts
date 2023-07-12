@@ -1,12 +1,13 @@
 import { ExtendedTeam } from './db.d';
-import type { Tournoi , User, Team, Arbitre, Player, Match, InfoMatch, Assistant, Tour} from "@prisma/client";
+import type { Tournoi , User, Team, Arbitre, Player, Match, InfoMatch, Assistant, Tour, Poule} from "@prisma/client";
 
 export type ExtendedTournoi = Tournoi & {
     user: User
     teams: Team[] | undefined
     arbitres: Arbitre[] | undefined,
     assistants: Assistant[] | undefined,
-    tours: ExtendedTour[] | undefined
+    tours: ExtendedTour[] | undefined,
+    groups: ExtendedPoule[] | undefined
 }
 
 export type ExtendedTeam = Team & {
@@ -19,4 +20,7 @@ export type ExtendedTeam = Team & {
 
 type ExtendedTour = Tour & {
     matchs: Match[] | undefined
+}
+export type ExtendedPoule = Poule & {
+    Team: Team[] | undefined
 }

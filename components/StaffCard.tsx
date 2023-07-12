@@ -27,7 +27,7 @@ export default function StaffCard({ id, name, email , tournoiId, role}: Props) {
                 role
             }
 
-            const { data } = await axios.post('/api/tournoi/create', payload)
+            const { data } = await axios.post('/api/tournoi/staff/delete', payload)
             return data as string
         },
         onError: (err: any) => {
@@ -57,12 +57,12 @@ export default function StaffCard({ id, name, email , tournoiId, role}: Props) {
         <div className='bg-white p-3 relative rounded-sm flex flex-col gap-2 shadow-md text-sm font-medium text-slate-900 '>
             <p> {name}</p>
             <p> {email}</p>
-            <Button className='text-md rounded-full absolute top-1 right-1' disabled={isLoading} onClick={(e)=>{
+            <button className='rounded-full absolute top-1 right-1 p-2 disabled:bg-gray-500 disabled:text-slate-300 flex items-center justify-center bg-slate-950 text-white'  disabled={isLoading} onClick={(e)=>{
                 e.preventDefault()
                 DeleteStaff()
             }}>
                 {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <X className='h-4 w-4' />}
-            </Button>
+            </button>
         </div>
     )
 }

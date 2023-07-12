@@ -1,8 +1,7 @@
 
-import { groupValidator } from '@/components/FormGroup'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { PlayerPayload, TeamValidator } from '@/lib/validators/team'
+import { groupValidator } from '@/lib/validators/group'
 import { z } from 'zod'
 
 
@@ -38,7 +37,7 @@ export async function POST(req: Request) {
         const group = await db.poule.create({
             data: {
                 tournoiId: tournoiExists.id,
-                label: nbGroups == 0 ? LABELS[nbGroups] : LABELS[nbGroups+1]
+                label:LABELS[nbGroups]
             }
         })
 
@@ -58,6 +57,8 @@ export async function POST(req: Request) {
     } catch (error) {
         console.log(error)
         if (error instanceof z.ZodError) {
+            console.log(error);
+            
             return new Response(error.message, { status: 422 })
         }
 
