@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import General from './General'
 import Admin from './Admin'
+import { Settings } from 'lucide-react'
 interface PageProps {
   params: {
     id: string
@@ -17,34 +18,50 @@ export default async function page({ params: { id } }: PageProps) {
       id: id
     },
     include: {
+      Setting: true,
       user: true,
       teams: {
         include: {
           responsable: true
         }
       },
-      arbitres: true,
-      tours: {
+      arbitres: {
         include: {
           matchs: true
         }
       },
-      assistants: true,
+      tours: {
+        include: {
+          matchs: {
+            include: {
+              equipeIn: true,
+              equipeOut: true
+            }
+          }
+        }
+      },
+      assistants: {
+        include: {
+          matchs: true
+        }
+      },
       groups: {
-        include:{
+        include: {
           Team: true
         }
-      }
-      
+      },
+
+
     }
   })
 
   if (!tournoi) return notFound();
-  
+
+
 
   return (
-    <> 
-      {tournoi.userId !== session?.user.id? <General tournoi={tournoi}/> : <Admin tournoi={tournoi}/>}
+    <>
+      {tournoi.userId !== session?.user.id ? <General tournoi={tournoi} /> : <Admin tournoi={tournoi} />}
     </>
   )
 }
