@@ -10,7 +10,7 @@ interface CardProps{
     staff: boolean | undefined
 }
 
-export default function TournoiCard({ tournoi:{ id, cover, isFree, name, lieu, ageMax, teams, prix }, staff}: CardProps) {
+export default function TournoiCard({ tournoi:{ id, cover, isFree, name, lieu, ageMax, teams }, staff}: CardProps) {
     return (
         <Link href={staff?`/tournoi/${id}/staff`:`/tournoi/${id}`} passHref>
             <div className='flex flex-wrap p-5  justify-start cursor-pointer shadow-md rounded-md border bg-white'>
@@ -21,7 +21,7 @@ export default function TournoiCard({ tournoi:{ id, cover, isFree, name, lieu, a
                     <div className='pt-2 items-center justify-between flex'>
                         <div className='flex items-center'>
                             <div className='pr-3 text-green-400'><Banknote /></div>
-                            <p className='font-bold text-md'>{isFree ? 'Free' : prix}</p>
+                            <p className='font-bold text-md'>{isFree ? 'Free' : "prix"}</p>
                         </div>
                     </div>
                     <div className='flex items-center p-1 justify-between w-[250px] gap-2 flex-nowrap md:w-full mt-2'>
