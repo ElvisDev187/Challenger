@@ -15,9 +15,50 @@ const page = async () => {
       userId: session?.user.id || ""
     },
     include: {
-      teams: true,
+      Setting: true,
       user: true,
-      arbitres: true
+      teams: {
+        include: {
+          responsable: true
+        }
+      },
+      arbitres: {
+        include: {
+          matchs: true
+        }
+      },
+      tours: {
+        include: {
+          matchs: {
+            include: {
+              equipeIn: true,
+              equipeOut: true,
+              arbitre:{
+                include: {
+                  matchs: true
+                }
+              },
+              Assistant: {
+                include: {
+                  matchs: true
+                }
+              }
+            }
+          }
+        }
+      },
+      assistants: {
+        include: {
+          matchs: true
+        }
+      },
+      groups: {
+        include: {
+          Team: true
+        }
+      },
+
+
     }
   })
 
@@ -31,9 +72,50 @@ const page = async () => {
       }
     },
     include: {
-      teams: true,
+      Setting: true,
       user: true,
-      arbitres: true
+      teams: {
+        include: {
+          responsable: true
+        }
+      },
+      arbitres: {
+        include: {
+          matchs: true
+        }
+      },
+      tours: {
+        include: {
+          matchs: {
+            include: {
+              equipeIn: true,
+              equipeOut: true,
+              arbitre:{
+                include: {
+                  matchs: true
+                }
+              },
+              Assistant: {
+                include: {
+                  matchs: true
+                }
+              }
+            }
+          }
+        }
+      },
+      assistants: {
+        include: {
+          matchs: true
+        }
+      },
+      groups: {
+        include: {
+          Team: true
+        }
+      },
+
+
     }
   })
 
@@ -57,9 +139,50 @@ const page = async () => {
       ]
     },
     include: {
-      teams: true,
+      Setting: true,
       user: true,
-      arbitres: true
+      teams: {
+        include: {
+          responsable: true
+        }
+      },
+      arbitres: {
+        include: {
+          matchs: true
+        }
+      },
+      tours: {
+        include: {
+          matchs: {
+            include: {
+              equipeIn: true,
+              equipeOut: true,
+              arbitre:{
+                include: {
+                  matchs: true
+                }
+              },
+              Assistant: {
+                include: {
+                  matchs: true
+                }
+              }
+            }
+          }
+        }
+      },
+      assistants: {
+        include: {
+          matchs: true
+        }
+      },
+      groups: {
+        include: {
+          Team: true
+        }
+      },
+
+
     }
   })
 
