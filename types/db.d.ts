@@ -20,7 +20,7 @@ export type ExtendedTeam = Team & {
 }
 
 export type ExtendedTour = Tour & {
-    matchs: ExtendedMatch[] | undefined
+    matchs: ExtendedMatch[] | undefined,
 }
 export type ExtendedArb = Arbitre & {
     matchs: Match[]
@@ -30,7 +30,9 @@ export type ExtendedAss = Assistant & {
 }
 export type ExtendedMatch = Match & {
     equipeIn: Team,
-    equipeOut: Team
+    equipeOut: Team,
+    arbitre: ExtendedArb,
+    Assistant: ExtendedAss
 }
 export type ExtendedPoule = Poule & {
     Team: Team[] | undefined

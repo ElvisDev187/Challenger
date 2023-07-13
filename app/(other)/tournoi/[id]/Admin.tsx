@@ -166,8 +166,12 @@ export default function Admin({ tournoi }: Props) {
                                             {
                                                 tournoi.tours[0]?.matchs?.map((match) => {
                                                     return (
-                                                        <div className='bg-white p-3 rounded-sm flex flex items-center justify-center shadow-md text-sm font-medium text-slate-900 ' key={match.id}>
-                                                            <p> {match.equipeIn.name}</p> <p className='text-md'>vs</p> <p>{match.equipeOut.name}</p>
+                                                        <div className='bg-white p-3 rounded-sm flex flex-col gap-2 items-center justify-center shadow-md text-sm font-medium text-slate-900 ' key={match.id}>
+                                                            <div className='flex gap-2'>
+                                                                <p> {match.equipeIn.name}</p> <p className='text-md'>vs</p> <p>{match.equipeOut.name}</p>
+                                                            </div>
+                                                            <p> arbitre: {match.arbitre.name || "non assigne"} | assistant: {match.Assistant.name || "non assigne"}</p>
+                                                            <p>{match.date || "Date"} - {match.heure || "Heure"} - {match.terrain || "Terrain"}</p>
                                                         </div>
 
                                                     )
@@ -182,15 +186,21 @@ export default function Admin({ tournoi }: Props) {
 
 
                             <Button disabled={isLoading} className='flex items-center justify-center my-5 gap-1 absolute top-0 right-20' onClick={async () => {
-                                if ( tournoi.Setting?.mode == "SIMPLE" && tournoi.tours.length == 0 && tournoi.groups.length == 0) {
+                                if (tournoi.Setting?.mode == "SIMPLE" && tournoi.tours.length == 0 && tournoi.groups.length == 0) {
                                     MatchAuto()
                                     return;
                                 }
-                                toggleForMatch(true)
-
+                               
                             }}>
-                               {isLoading? <Loader2 className='h-6 w-6 animate-spin'/>: <PlusCircle className='h-6 w-6' />}
-                                Planifier un match
+                                {isLoading ? <Loader2 className='h-6 w-6 animate-spin' /> : <PlusCircle className='h-6 w-6' />}
+                                Generer les matchs
+                            </Button>
+                            <Button disabled={isLoading} className='flex items-center justify-center my-5 gap-1 absolute top-0 right-44' onClick={async () => {
+                            
+                               
+                            }}>
+                                {isLoading ? <Loader2 className='h-6 w-6 animate-spin' /> : <PlusCircle className='h-6 w-6' />}
+                                Planifier
                             </Button>
                         </>
                     }

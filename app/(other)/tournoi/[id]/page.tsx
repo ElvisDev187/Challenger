@@ -35,7 +35,17 @@ export default async function page({ params: { id } }: PageProps) {
           matchs: {
             include: {
               equipeIn: true,
-              equipeOut: true
+              equipeOut: true,
+              arbitre:{
+                include: {
+                  matchs: true
+                }
+              },
+              Assistant: {
+                include: {
+                  matchs: true
+                }
+              }
             }
           }
         }
