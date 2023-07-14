@@ -13,17 +13,20 @@ import { format } from 'date-fns'
 import { Loader2 } from 'lucide-react'
 import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
-import { ExtendedTournoi } from "@/types/db";
+import { ExtendedTournoi, ExtendedMatch } from "@/types/db";
+import { useFormMatch } from "@/context/store";
+import { UpdateMatchPayload } from "@/lib/validators/match";
 
 
 interface Props {
-    tournoi: ExtendedTournoi
+    tournoi: ExtendedTournoi,
+    match: ExtendedMatch | undefined
 }
 
-const MatchForm = ({tournoi}:Props) => {
+const MatchForm = ({tournoi, match}:Props) => {
     const router = useRouter()
     const [terrain, setTerrain] = useState<string>('')
     const [time, setTime] = useState('')
@@ -32,14 +35,20 @@ const MatchForm = ({tournoi}:Props) => {
     const [debut, setDateDeb] = useState<Date>()
 
     const { loginToast } = useCustomToasts()
+    const { isFormMatchOpen, toggleForMatch } = useFormMatch()
 
     const { mutate: createTournoi, isLoading } = useMutation({
         mutationFn: async () => {
-            const payload = {
-
+            const payload: UpdateMatchPayload = {
+                matchId: match?.id!,
+                terrain,
+                time,
+                date: debut?.toDateString()!,
+                assistantId: assId,
+                arbitreId: arbitreId
             }
 
-            const { data } = await axios.post('/api/tournoi/create', payload)
+            const { data } = await axios.post('/api/tournoi/match', payload)
             return data as string
         },
         onError: (err: any) => {
@@ -76,14 +85,19 @@ const MatchForm = ({tournoi}:Props) => {
             toast({
                 description: 'Nouveou tournoi creer avec success',
             })
-            router.push(`/tournoi/my`)
+            startTransition(()=>{
+                router.refresh()
+            })
+            toggleForMatch(false)
+
+            
         },
     })
 
     return (
         <>
             <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 mt-10">
-                <h1 className="text-xl text-center font-bold py-5 text-slate-900 capitalize dark:text-white">Nouveau Match</h1>
+                <h1 className="text-xl text-center font-bold py-5 text-slate-900 capitalize dark:text-white">{match?.equipeIn.name} vs {match?.equipeOut.name}</h1>
                 <hr className='bg-gray-500 h-px' />
                 <form>
                     <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
@@ -126,7 +140,7 @@ const MatchForm = ({tournoi}:Props) => {
                                 setAb(value)
                                 alert(value)
                                 }}>
-                                <SelectTrigger className="w-[200px]">
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Selectionnez un arbitre" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -144,7 +158,7 @@ const MatchForm = ({tournoi}:Props) => {
                             <Select onValueChange={(value)=>{
                                 setAss(value)                              
                                 }}>
-                                <SelectTrigger className="w-[180px]">
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Selectionnez un assistant" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -164,11 +178,12 @@ const MatchForm = ({tournoi}:Props) => {
                         <Button
                             disabled={isLoading}
                             variant='outline'
-                            onClick={() => router.back()}>
+                            onClick={() => toggleForMatch(false)}>
                             Cancel
                         </Button>
                         <Button disabled={isLoading} onClick={(e) => {
                             e.preventDefault()
+                            createTournoi()
                         }} className="px-6 py-2 leading-5 ">
                             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}Save</Button>
                     </div>
