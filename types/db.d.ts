@@ -3,11 +3,11 @@ import type { Tournoi , User, Team, Arbitre, Player, Match, InfoMatch, Assistant
 
 export type ExtendedTournoi = Tournoi & {
     user: User
-    teams: Team[] | undefined
-    arbitres: ExtendedArb[],
-    assistants: ExtendedAss[],
-    tours: ExtendedTour[],
-    groups: ExtendedPoule[],
+    teams: Team[] | null
+    arbitres: ExtendedArb[] | null,
+    assistants: ExtendedAss[] | null,
+    tours: ExtendedTour[] | null,
+    groups: ExtendedPoule[] |  null,
     Setting: Setting | null
 }
 

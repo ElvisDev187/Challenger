@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json()
-    const { name, lieu, debut, inscriptionLimit, isFree, description, ageMax, cover, limit } = TournoiValidator.parse(body)
+    const { name, lieu, debut, inscriptionLimit, isFree, description, ageMax, cover,limit } = TournoiValidator.parse(body)
 
     // check if tournoi already exists
     const tournoiExists = await db.tournoi.findFirst({
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     if (tournoiExists) {
       return new Response('Tournoi already exists', { status: 409 })
     }
-
+   
     // create tournoi and associate it with the user
     const tournoi = await db.tournoi.create({
       data: {
@@ -38,6 +38,11 @@ export async function POST(req: Request) {
         userId: session.user.id,
         lieu,
       },
+    })
+    const setting = await db.setting.create({
+      data:{
+        tournoiId: tournoi.id
+      }
     })
 
    

@@ -71,7 +71,7 @@ export default async function page({ params: { id } }: PageProps) {
 
   return (
     <>
-      {tournoi.userId !== session?.user.id ? <General tournoi={tournoi} /> : <Admin tournoi={tournoi} />}
+      {tournoi.userId !== session?.user.id ? <General tournoi={tournoi!} /> : <Admin tournoi={tournoi!} />}
     </>
   )
 }
