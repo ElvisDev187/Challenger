@@ -1,3 +1,4 @@
+import { InfoMatchType } from "@prisma/client";
 import { z } from "zod";
 
 export const UpdateMatchValidator = z.object({
@@ -10,3 +11,14 @@ export const UpdateMatchValidator = z.object({
 }) 
 
 export type UpdateMatchPayload = z.infer<typeof UpdateMatchValidator>
+
+export const InfoValidator = z.object({
+    type: z.enum([InfoMatchType.BUT,InfoMatchType.CARTON_JAUNE, InfoMatchType.CARTON_ROUGE]),
+    minute: z.number(),
+    equipeId: z.string(),
+    playerId: z.string(),
+    matchId : z.string()
+})
+
+export type InfoPayload = z.infer<typeof InfoValidator>
+ 

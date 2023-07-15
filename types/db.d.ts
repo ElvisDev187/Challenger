@@ -34,6 +34,13 @@ export type ExtendedMatch = Match & {
     arbitre: ExtendedArb,
     Assistant: ExtendedAss
 }
+export type ExtendedMatch2 = Match & {
+    equipeIn: Team,
+    equipeOut: Team,
+    arbitre: Arbitre |null,
+    Assistant: Assistant|null,
+    infoMatchs:    InfoMatch[]
+}
 export type ExtendedPoule = Poule & {
     Team: Team[] | undefined
 }

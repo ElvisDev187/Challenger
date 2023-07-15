@@ -76,6 +76,7 @@ model Tournoi {
   assistants       Assistant[]
   groups           Poule[]
   Setting          Setting?
+  suscribers       Suscriber[]
 }
 
 model Team {
@@ -129,6 +130,13 @@ model Assistant {
   matchs    Match[]
 }
 
+model Suscriber {
+  id        String  @id @default(cuid())
+  tournoiId String
+  tournoi   Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  email    String
+}
+
 model Tour {
   id            String   @id @default(cuid())
   rang          Int
@@ -159,10 +167,10 @@ model Match {
   status      StatusMatch @default(ATTENTE)
   equipeIn    Team        @relation(fields: [equipeInId], references: [id], onDelete: Cascade, name: "locale")
   equipeOut   Team        @relation(fields: [equipeOutId], references: [id], onDelete: Cascade, name: "exterieur")
-  arbitre     Arbitre?     @relation(fields: [arbitreId], references: [id], onDelete: Cascade)
+  arbitre     Arbitre?    @relation(fields: [arbitreId], references: [id], onDelete: Cascade)
   tour        Tour        @relation(fields: [tourId], references: [id], onDelete: Cascade)
   infoMatchs  InfoMatch[]
-  Assistant   Assistant?   @relation(fields: [assistantId], references: [id])
+  Assistant   Assistant?  @relation(fields: [assistantId], references: [id])
   assistantId String?
 }
 
@@ -179,14 +187,14 @@ model InfoMatch {
 }
 
 model Setting {
-  id        String  @id @default(cuid())
-  tournoiId String  @unique
-  tournoi   Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
-  prix  Float @default(0)
-  match_per_day Int @default(2)
-  day_interval Int @default(2)
-  mode Mode @default(SIMPLE)
-  limit_teams Int @default(0)
+  id            String  @id @default(cuid())
+  tournoiId     String  @unique
+  tournoi       Tournoi @relation(fields: [tournoiId], references: [id], onDelete: Cascade)
+  prix          Float   @default(0)
+  match_per_day Int     @default(2)
+  day_interval  Int     @default(2)
+  mode          Mode    @default(SIMPLE)
+  limit_teams   Int     @default(0)
 }
 
 enum InfoMatchType {

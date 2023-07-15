@@ -12,7 +12,7 @@ interface CardProps{
 
 export default function TournoiCard({ tournoi:{ id, cover, isFree, name, lieu, ageMax, teams }, staff}: CardProps) {
     return (
-        <Link href={staff?`/tournoi/${id}/staff`:`/tournoi/${id}`} passHref>
+        <Link href={staff?`/tournoi/${id}/work`:`/tournoi/${id}`} passHref>
             <div className='flex flex-wrap p-5  justify-start cursor-pointer shadow-md rounded-md border bg-white'>
                 <div className='w-[400px] h-[260px] overflow-hidden rounded-sm '>
                     <Image src={cover} width={400} height={260} alt='cover' className='object-cover' />

@@ -264,7 +264,7 @@ const Page = () => {
                 })
               }
             }} className="px-6 py-2 leading-5 ">
-              {isLoading? <Loader2 className="h-4 w-4 animate-spin"/>: null}Save</Button>
+              {isLoading? <Loader2 className="h-4 w-4 animate-spin mr-2"/>: null}Save</Button>
           </div>
         </form>
       </section>

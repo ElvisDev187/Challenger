@@ -2,8 +2,8 @@ import ViewTeam from '@/components/ViewTeam'
 import { buttonVariants } from '@/components/ui/button'
 import { getAuthSession } from '@/lib/auth'
 import { db } from '@/lib/db'
-import {format} from 'date-fns'
-import {  Metadata } from 'next'
+import { format } from 'date-fns'
+import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React, { ReactNode } from 'react'
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 interface pageProps {
     children: ReactNode,
     params: { id: string },
- 
+
 }
 export default async function layout({ children, params: { id } }: pageProps) {
     const session = await getAuthSession()
@@ -38,14 +38,28 @@ export default async function layout({ children, params: { id } }: pageProps) {
             responsableId: session?.user.id || ""
         }
     })
- 
-    
+    const assistant = await db.assistant.findFirst({
+        where: {
+            tournoiId: id,
+            email: session?.user.email || ""
+
+        }
+    })
+    const arbitre = await db.arbitre.findFirst({
+        where: {
+            tournoiId: id,
+            email: session?.user.email || ""
+
+        }
+    })
+
+
     const isSubscribed = !!inscription
     if (!tournoi) return notFound()
 
-    
 
-    
+
+
     return (
         <div className='sm:container max-w-7xl mx-auto h-full pt-12'>
             <div>
@@ -60,13 +74,13 @@ export default async function layout({ children, params: { id } }: pageProps) {
                             <div className='flex justify-between gap-x-4 py-3'>
                                 <dt className='text-gray-500'>Cloture d'inscription</dt>
                                 <dd className='text-gray-700'>
-                                    <div className='text-gray-900 font-medium'>{ format(new Date(tournoi.inscriptionLimit.split("/").reverse().join("-")),"dd MMMM yyy")}</div>
+                                    <div className='text-gray-900 font-medium'>{format(new Date(tournoi.inscriptionLimit.split("/").reverse().join("-")), "dd MMMM yyy")}</div>
                                 </dd>
                             </div>
                             <div className='flex justify-between gap-x-4 py-3'>
                                 <dt className='text-gray-500'>Ouverture</dt>
                                 <dd className='text-gray-700'>
-                                    <div className='text-gray-900 font-medium'>{ format(new Date(tournoi.debut.split("/").reverse().join("-")),"dd MMMM yyy")}</div>
+                                    <div className='text-gray-900 font-medium'>{format(new Date(tournoi.debut.split("/").reverse().join("-")), "dd MMMM yyy")}</div>
                                 </dd>
                             </div>
                             <div className='flex justify-between gap-x-4 py-3'>
@@ -88,15 +102,15 @@ export default async function layout({ children, params: { id } }: pageProps) {
                             ) : null}
                             {isSubscribed ?
 
-                                <ViewTeam teamId={inscription.id} tournoiId={id}/>
+                                <ViewTeam teamId={inscription.id} tournoiId={id} />
                                 :
                                 <>
-                                    {tournoi.userId != session?.user.id ?
+                                    {tournoi.userId != session?.user.id && !arbitre && !assistant?
                                         <Link href={`/tournoi/${id}/suscribe`} className={buttonVariants({
                                             variant: "default",
                                             className: "w-full mb-6"
                                         })}>
-                                            Inscrivez votre equipe 
+                                            Inscrivez votre equipe
                                         </Link>
                                         :
                                         null
